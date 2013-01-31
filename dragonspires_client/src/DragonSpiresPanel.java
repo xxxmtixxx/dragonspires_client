@@ -78,7 +78,7 @@ import java.util.StringTokenizer;
 public class DragonSpiresPanel extends Panel implements Runnable {
 
 	final char version[] = {'V','0','0','2','6'};
-	private final static String[] habl = {"sosms.kyleswebspace.com"};
+	private final static String[] habl = {"localhost"};
 
 	final static String itemnames[]= {"nothing","some paper",
                                                                 "light armor",
