@@ -66,7 +66,6 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
@@ -353,7 +352,7 @@ public class DragonSpiresPanel extends Panel implements Runnable {
 	Font f,fs;
 	FontMetrics fm,fms;
 
-	private ObjectInputStream objectInputStream;
+	private DataInputStream i;
 	private PrintStream o;
 	private Socket s;
 	PrintStream logstream;
@@ -594,7 +593,7 @@ public class DragonSpiresPanel extends Panel implements Runnable {
 			}
 			catch (Exception e) {}
 
-			objectInputStream = new ObjectInputStream(s.getInputStream());
+			i = new DataInputStream(new BufferedInputStream(s.getInputStream()));
 			o = new PrintStream(new BufferedOutputStream(s.getOutputStream()), true);
 
 			connstat = "Connected.";
@@ -616,13 +615,12 @@ public class DragonSpiresPanel extends Panel implements Runnable {
 		}
 
 		try {
-			ServerMessage serverMessage = null;
-//			while ((incoming=i.readLine())!=null) {
-			while ((serverMessage = (ServerMessage)objectInputStream.readObject()) != null) {
+			String incoming;
+			while ((incoming=i.readLine())!=null) {
+
 				//String incoming = i.readLine();
 				//System.out.println(incoming);
 
-				String incoming = serverMessage.getActionString();
 				if (ledin==1) {
 					switch (incoming.charAt(0)) {
 						case '<':
@@ -840,7 +838,7 @@ public class DragonSpiresPanel extends Panel implements Runnable {
 
 		try {
 			o.close();
-			objectInputStream.close();
+			i.close();
 			s.close();
 		}
 		catch (Exception e) {
