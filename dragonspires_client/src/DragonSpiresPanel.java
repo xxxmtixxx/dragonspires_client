@@ -80,7 +80,7 @@ import java.util.StringTokenizer;
 
 public class DragonSpiresPanel extends Panel implements Runnable {
 
-	final char version[] = {'V','0','0','2','6'};
+	final char version[] = {'V','0','0','7','5'};
 	private final static String[] habl = {"localhost"};
 
 	final static String itemnames[]= {"nothing","some paper",
