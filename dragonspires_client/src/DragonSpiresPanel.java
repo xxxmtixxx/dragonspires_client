@@ -63,6 +63,7 @@ import java.net.URL;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.InputStream;
 import java.io.IOException;
@@ -71,6 +72,7 @@ import java.io.PrintStream;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.File;
+import java.io.StringReader;
 
 import java.util.Vector;
 import java.util.StringTokenizer;
@@ -619,59 +621,63 @@ public class DragonSpiresPanel extends Panel implements Runnable {
 			ServerMessage serverMessage = null;
 //			while ((incoming=i.readLine())!=null) {
 			while ((serverMessage = (ServerMessage)objectInputStream.readObject()) != null) {
-				//String incoming = i.readLine();
-				//System.out.println(incoming);
-
-				String incoming = serverMessage.getActionString();
-				if (ledin==1) {
-					switch (incoming.charAt(0)) {
-						case '<':
-							map.placePlayer(incoming);
-							continue;
-						case '@':
-							//updatePos(incoming.charAt(1)-32,incoming.charAt(2)-32);
-							map.xpos = incoming.charAt(1)-32;
-							map.ypos = incoming.charAt(2)-32;
-							map.drawTiles = 1;
-							map.justmoved=3;
-							continue;
-						case '#':
-							updateStam(incoming.charAt(1)-32);
-							continue;
-						case '!':
-							if (amapplet) {
-								if (dsapplet.sound.ps.getState())
-									dsapplet.sound.play(Integer.parseInt(incoming.substring(1,incoming.length())));
-							}
-							continue;
-						case '>':
-							map.placeItem(incoming);
-							continue;
-						case '%':
-							updateFeet(map.decode(incoming.charAt(1)-32,incoming.charAt(2)-32));
-							continue;
+				
+				String incoming = null;
+				BufferedReader reader = new BufferedReader(new StringReader(serverMessage.getActionString()));
+				while((incoming = reader.readLine()) != null) {
+					//String incoming = i.readLine();
+					//System.out.println(incoming);
+	
+					if (ledin==1) {
+						switch (incoming.charAt(0)) {
+							case '<':
+								map.placePlayer(incoming);
+								continue;
+							case '@':
+								//updatePos(incoming.charAt(1)-32,incoming.charAt(2)-32);
+								map.xpos = incoming.charAt(1)-32;
+								map.ypos = incoming.charAt(2)-32;
+								map.drawTiles = 1;
+								map.justmoved=3;
+								continue;
+							case '#':
+								updateStam(incoming.charAt(1)-32);
+								continue;
+							case '!':
+								if (amapplet) {
+									if (dsapplet.sound.ps.getState())
+										dsapplet.sound.play(Integer.parseInt(incoming.substring(1,incoming.length())));
+								}
+								continue;
+							case '>':
+								map.placeItem(incoming);
+								continue;
+							case '%':
+								updateFeet(map.decode(incoming.charAt(1)-32,incoming.charAt(2)-32));
+								continue;
+						}
 					}
-				}
-
-				try {
-					switch (incoming.charAt(0)) {
-						case '(':
-						case '[':
-							incomingText(incoming);
-							continue;
+	
+					try {
+						switch (incoming.charAt(0)) {
+							case '(':
+							case '[':
+								incomingText(incoming);
+								continue;
+						}
 					}
-				}
-				catch (Exception e) {}
-
-				switch (ledin) {
-					case 1:
-						secondaryIncoming(incoming);
-						break;
-					case 0:
-						checkPreLogin(incoming);
-						break;
-					default:
-						checkIntro(incoming);
+					catch (Exception e) {}
+	
+					switch (ledin) {
+						case 1:
+							secondaryIncoming(incoming);
+							break;
+						case 0:
+							checkPreLogin(incoming);
+							break;
+						default:
+							checkIntro(incoming);
+					}
 				}
 			}
 		}
